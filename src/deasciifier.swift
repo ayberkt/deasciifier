@@ -1,53 +1,86 @@
-let asciiRepresentations : [String: String] = [
+let asciiRepresentations : [Character: Character] = [
   "ç": "c",
   "Ç": "C",
   "ğ": "g",
   "Ğ": "G",
   "ö": "o",
   "Ö": "O",
-  "ı": "i",
-  "İ": "I",
   "ş": "s",
-  "Ş": "S"
+  "Ş": "S",
+  "ü": "U",
+  "Ü": "U"
 ]
 
-let originalRepresentations : [String: String] = [
-  "c": "ç",
-  "C": "Ç",
-  "g": "ğ",
-  "G": "Ğ",
-  "o": "ö",
-  "O": "Ö",
-  "i": "ı",
-  "I": "İ",
-  "s": "ş",
-  "S": "Ş"
+let originalRepresentations : [Character: Character] = [
+  "c": "ç", "C": "Ç",
+  "g": "ğ", "G": "Ğ",
+  "o": "ö", "O": "Ö",
+  "i": "ı", "I": "İ",
+  "s": "ş", "S": "Ş"
+]
+
+let upperCaseLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters)
+
+let toggleAccentTable : [Character: Character] = [
+  "c": "ç", "C": "Ç", "g": "ğ", "G": "Ğ", "o": "ö",
+  "O": "Ö", "u": "ü", "U": "Ü", "i": "ı", "I": "İ",
+  "s": "ş", "S": "Ş",
+  "ç": "c", "Ç": "C", "ğ": "g", "Ğ": "G", "ö": "o",
+  "Ö": "O", "ü": "u", "Ü": "U", "ı": "i", "İ": "I",
+  "ş": "s", "Ş": "S"
 ]
 
 enum AsciifyLetterMode { case regular, lowercase, uppercase }
 
-func asciify(letter : String, mode : AsciifyLetterMode) -> String {
+func asciify(letter : Character, mode : AsciifyLetterMode)
+            -> Character {
   if let r = asciiRepresentations[letter] {
     switch (mode) {
       case .regular:   return r;
-      case .lowercase: return r.lowercased();
-      case .uppercase: return r.uppercased();
+      case .lowercase: return r.capitalized();
+      case .uppercase: return r.();
     }
   }
   return letter;
 }
 
-func toggleAccent(letter : String) -> String {
-  if let val = asciiRepresentations[letter] {
-    return val;
-  } else if let val = originalRepresentations[letter] {
-    return val;
-  }
+func toggleAccent(letter : Character) -> Character {
+  if let val = toggleAccentTable[letter] { return val; }
   return letter;
 }
 
-assert(asciify(letter: "ı", mode : .uppercase) == "I")
-print(asciify(letter: "ı", mode : .uppercase))
-print(asciify(letter: "İ", mode : .lowercase))
-print(asciify(letter: "İ", mode : .regular))
-print(asciify(letter: "ı", mode : .regular))
+func setCharAt(s : String, n : Int, c : Character) -> String {
+  var modifiedString = String()
+  for (i, char) in s.characters.enumerated() {
+      modifiedString += String((i == n) ? c : char)
+  }
+  return modifiedString
+}
+
+func charAt(s : String, i : Int) -> Character {
+  let index = s.index(s.startIndex, offsetBy: i);
+  return s[index];
+}
+
+func substring(x : Int, y : Int, s : String) -> String {
+  let start = s.index(s.startIndex, offsetBy: x);
+  let end   = s.index(s.startIndex,   offsetBy: y);
+  return s[start..<end];
+}
+
+var asciiString = String()
+var turkishString = String()
+
+func getContext(size : Int, point : Int) -> String {
+  var s = String(repeating: " ", count: 1 + 2 * size);
+  s = setCharAt(s: s, n: size, c: "X");
+
+  var (i, space, index) = (size + 1, false, point);
+  index += 1;
+  var currentChar : Character = " ";
+
+  while (i < s.characters.count &&
+  !space && index < asciiString.characters.count) {
+    currentChar = charAt(s: turkishString, i: index);
+  }
+}
