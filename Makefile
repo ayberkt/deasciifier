@@ -1,5 +1,5 @@
 all:
-	swiftc -warnings-as-errors deasciifier.swift
+	swiftc -warnings-as-errors src/deasciifier.swift
 
 clean:
 	rm deasciifier
