@@ -1,3 +1,5 @@
+import patterns
+
 let asciiRepresentations : [Character: Character] = [
   "ç": "c",
   "Ç": "C",
@@ -32,16 +34,26 @@ let toggleAccentTable : [Character: Character] = [
 
 enum AsciifyLetterMode { case regular, lowercase, uppercase }
 
+func lowercased(letter : Character) -> Character {
+  let s = String(letter);
+  return s.lowercased()[s.startIndex];
+}
+
+func uppercased(letter : Character) -> Character {
+  let s = String(letter);
+  return s.uppercased()[s.startIndex];
+}
+
 func asciify(letter : Character, mode : AsciifyLetterMode)
-            -> Character {
+            -> Character? {
   if let r = asciiRepresentations[letter] {
     switch (mode) {
       case .regular:   return r;
-      case .lowercase: return r.capitalized();
-      case .uppercase: return r.();
+      case .lowercase: return lowercased(letter: r);
+      case .uppercase: return uppercased(letter: r);
     }
   }
-  return letter;
+  return nil;
 }
 
 func toggleAccent(letter : Character) -> Character {
@@ -82,5 +94,42 @@ func getContext(size : Int, point : Int) -> String {
   while (i < s.characters.count &&
   !space && index < asciiString.characters.count) {
     currentChar = charAt(s: turkishString, i: index);
+    if let x = asciify(letter: currentChar, mode: .lowercase) {
+      s = setCharAt(s: s, n: i, c: x);
+      i += 1;
+      space = false;
+    } else {
+      if (!space) { i += 1; space = true; }
+    }
+    index += 1;
   }
+  s = substring(x: 0, y: i, s: s);
+
+  index = point;
+  i = size - 1;
+  space = false;
+  index -= 1;
+
+  while (i >= 0 && index >= 0) {
+    currentChar = charAt(s: turkishString, i: index);
+    if let x = asciify(letter: currentChar, mode: .uppercase) {
+      s = setCharAt(s: s, n: i, c: x);
+      i -= 1;
+      space = false;
+    }
+    index -= 1;
+  }
+  return s;
+}
+
+func needsCorrection(c : Character, point : Int) -> Bool {
+  let ch = c;
+  var tr : Character;
+  assert(tr == " ");
+  if let v = asciify(letter: c, mode: .regular) {
+    tr = v;
+  } else {
+    tr = ch;
+  }
+
 }
