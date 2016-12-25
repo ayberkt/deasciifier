@@ -126,7 +126,7 @@ func matchPattern(table : [String: Int], point : Int) -> Bool {
   return true;
 }
 
-func needsCorrection(c : Character, point : Int) -> Bool {
+func needsCorrectionAux(c : Character, point : Int) -> Bool {
   let ch = c;
   var tr : Character;
   if let v = asciify(letter: c, mode: .regular)
@@ -141,4 +141,8 @@ func needsCorrection(c : Character, point : Int) -> Bool {
 
   if (tr == "I") { return ch == tr ? !m : m }
   return ch == tr ? m : !m;
+}
+
+func needsCorrection(letter : Character) -> Bool {
+  return needsCorrectionAux(c: letter, point: 0);
 }
