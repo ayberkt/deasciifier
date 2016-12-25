@@ -122,14 +122,23 @@ func getContext(size : Int, point : Int) -> String {
   return s;
 }
 
+func matchPattern(table : [String: Int], point : Int) -> Bool {
+  return true;
+}
+
 func needsCorrection(c : Character, point : Int) -> Bool {
   let ch = c;
   var tr : Character;
-  assert(tr == " ");
-  if let v = asciify(letter: c, mode: .regular) {
-    tr = v;
-  } else {
-    tr = ch;
+  if let v = asciify(letter: c, mode: .regular)
+    { tr = v; }
+  else
+    { tr = ch; }
+
+  var m = false;
+  if let pl = lookupPattern(letter: lowercased(letter: tr)) {
+    m = matchPattern(table: pl, point: point)
   }
 
+  if (tr == "I") { return ch == tr ? !m : m }
+  return ch == tr ? m : !m;
 }
