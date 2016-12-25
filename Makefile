@@ -1,5 +1,8 @@
+patterns: src/patterns.swift
+	swiftc src/patterns.swift -emit-library
+
 all:
-	swiftc -warnings-as-errors src/deasciifier.swift
+	swiftc -I. -L. -lpatterns -warnings-as-errors src/deasciifier.swift
 
 clean:
 	rm deasciifier
