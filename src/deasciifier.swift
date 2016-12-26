@@ -71,6 +71,7 @@ func setCharAt(s : String, n : Int, c : Character) -> String {
 
 func charAt(s : String, i : Int) -> Character {
   let index = s.index(s.startIndex, offsetBy: i);
+  assert(index < s.endIndex);
   return s[index];
 }
 
@@ -89,7 +90,7 @@ func getContext(size : Int, point : Int) -> String {
 
   var (i, space, index) = (size + 1, false, point);
   index += 1;
-  var currentChar : Character = " ";
+  var currentChar : Character;
 
   while (i < s.characters.count &&
   !space && index < asciiString.characters.count) {
@@ -116,14 +117,31 @@ func getContext(size : Int, point : Int) -> String {
       s = setCharAt(s: s, n: i, c: x);
       i -= 1;
       space = false;
+    } else {
+      if !space { i -= 1; space = true; }
     }
     index -= 1;
   }
   return s;
 }
 
-func matchPattern(table : [String: Int], point : Int) -> Bool {
-  return true;
+let contextSize = 10;
+
+func matchPattern(dlist : [String: Int], point : Int) -> Bool {
+  var rank = dlist.count * 2;
+  let s = getContext(size: contextSize, point: point);
+  var (start, end, _len) = (0, 0, s.characters.count);
+
+  while start <= contextSize {
+    end = contextSize + 1;
+    while end <= _len {
+      let s = substring(x: start, y: end, s: s);
+      if let r = dlist[s] { if abs(r) < abs(rank) { rank = r; } }
+      end += 1;
+    }
+    start += 1;
+  }
+  return rank > 0;
 }
 
 func needsCorrectionAux(c : Character, point : Int) -> Bool {
@@ -136,7 +154,7 @@ func needsCorrectionAux(c : Character, point : Int) -> Bool {
 
   var m = false;
   if let pl = lookupPattern(letter: lowercased(letter: tr)) {
-    m = matchPattern(table: pl, point: point)
+    m = matchPattern(dlist: pl, point: point)
   }
 
   if (tr == "I") { return ch == tr ? !m : m }
@@ -146,3 +164,18 @@ func needsCorrectionAux(c : Character, point : Int) -> Bool {
 func needsCorrection(letter : Character) -> Bool {
   return needsCorrectionAux(c: letter, point: 0);
 }
+
+func deasciify(s : String) -> String {
+  for i in 1...s.characters.count-1 {
+    let c = charAt(s: s, i: i)
+    if (needsCorrectionAux(c: charAt(s: s, i: i), point: i)) {
+      turkishString =
+        setCharAt(s: turkishString, n: i, c: toggleAccent(letter: c))
+    } else {
+      turkishString = setCharAt(s: turkishString, n: i, c: c)
+    }
+  }
+  return turkishString
+}
+
+print(deasciify(s: "opusmeyi"))
