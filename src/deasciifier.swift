@@ -1,5 +1,8 @@
 import patterns
 
+var turkishString = String();
+var asciiString = String();
+
 let asciiRepresentations : [Character: Character] = [
   "ç": "c",
   "Ç": "C",
@@ -35,8 +38,7 @@ let toggleAccentTable : [Character: Character] = [
 enum AsciifyLetterMode { case regular, lowercase, uppercase }
 
 func lowercased(letter : Character) -> Character {
-  let s = String(letter);
-  return s.lowercased()[s.startIndex];
+  let s = String(letter); return s.lowercased()[s.startIndex];
 }
 
 func uppercased(letter : Character) -> Character {
@@ -46,6 +48,7 @@ func uppercased(letter : Character) -> Character {
 
 func asciify(letter : Character, mode : AsciifyLetterMode)
             -> Character? {
+  print("asciify: letter: \(letter), mode: \(mode)")
   if let r = asciiRepresentations[letter] {
     switch (mode) {
       case .regular:   return r;
@@ -62,31 +65,41 @@ func toggleAccent(letter : Character) -> Character {
 }
 
 func setCharAt(s : String, n : Int, c : Character) -> String {
+  print("setCharAt (before): s: \(s), n: \(n), c: \(c)")
   var modifiedString = String()
   for (i, char) in s.characters.enumerated() {
       modifiedString += String((i == n) ? c : char)
   }
+  print("setCharAt (after): s: \(s), n: \(n), c: \(c)")
   return modifiedString
 }
+assert(setCharAt(s: "ayberk", n: 0, c: "b") == "byberk")
+assert(setCharAt(s: "ayberk", n: 1, c: "b") == "abberk")
 
 func charAt(s : String, i : Int) -> Character {
+  print("charAt: s: \(s), i: \(i)")
   let index = s.index(s.startIndex, offsetBy: i);
-  assert(index < s.endIndex);
+  print("HELLO")
   return s[index];
 }
 
 func substring(x : Int, y : Int, s : String) -> String {
+  print("substring: x: \(x), y: \(y), s: \(s), len: \(s.characters.count)")
   let start = s.index(s.startIndex, offsetBy: x);
-  let end   = s.index(s.startIndex,   offsetBy: y);
+  let end   = s.index(s.startIndex, offsetBy: y);
   return s[start..<end];
 }
-
-var asciiString = String()
-var turkishString = String()
+assert(substring(x: 0, y: 3, s: "ayberk") == "ayb")
+assert(substring(x: 0, y: 0, s: "ayberk") == "")
+assert(substring(x: 0, y: 1, s: "ayberk") == "a")
 
 func getContext(size : Int, point : Int) -> String {
+  print("getContext: size: \(size), point: \(point)")
   var s = String(repeating: " ", count: 1 + 2 * size);
-  s = setCharAt(s: s, n: size, c: "X");
+  // s = setCharAt(s: s, n: size, c: "X");
+  s = substring(x: 0, y: size, s: s)
+    + "X"
+    + substring(x: size+1, y: s.characters.count, s: s)
 
   var (i, space, index) = (size + 1, false, point);
   index += 1;
@@ -94,13 +107,14 @@ func getContext(size : Int, point : Int) -> String {
 
   while (i < s.characters.count &&
   !space && index < asciiString.characters.count) {
+    print("getContext: turkishString: \(turkishString), i: \(i)")
     currentChar = charAt(s: turkishString, i: index);
     if let x = asciify(letter: currentChar, mode: .lowercase) {
       s = setCharAt(s: s, n: i, c: x);
       i += 1;
       space = false;
     } else {
-      if (!space) { i += 1; space = true; }
+      if !space { i += 1; space = true; }
     }
     index += 1;
   }
@@ -111,7 +125,8 @@ func getContext(size : Int, point : Int) -> String {
   space = false;
   index -= 1;
 
-  while (i >= 0 && index >= 0) {
+  print("turkishString: \(turkishString)");
+  while i >= 0 && index >= 0 {
     currentChar = charAt(s: turkishString, i: index);
     if let x = asciify(letter: currentChar, mode: .uppercase) {
       s = setCharAt(s: s, n: i, c: x);
@@ -128,14 +143,17 @@ func getContext(size : Int, point : Int) -> String {
 let contextSize = 10;
 
 func matchPattern(dlist : [String: Int], point : Int) -> Bool {
+  print("matchPattern: dlist: <dlist>, point: \(point)")
   var rank = dlist.count * 2;
-  let s = getContext(size: contextSize, point: point);
-  var (start, end, _len) = (0, 0, s.characters.count);
+  print("turkishString: \(turkishString)");
+  let str = getContext(size: contextSize, point: point);
+  print("str: \(str)")
+  var (start, end, _len) = (0, 0, str.characters.count);
 
   while start <= contextSize {
     end = contextSize + 1;
     while end <= _len {
-      let s = substring(x: start, y: end, s: s);
+      let s = substring(x: start, y: end, s: str);
       if let r = dlist[s] { if abs(r) < abs(rank) { rank = r; } }
       end += 1;
     }
@@ -145,6 +163,7 @@ func matchPattern(dlist : [String: Int], point : Int) -> Bool {
 }
 
 func needsCorrection(c : Character, point : Int) -> Bool {
+  print("needsCorrection: c: \(c), point: \(point)")
   let ch = c;
   var tr : Character;
   if let v = asciify(letter: c, mode: .regular)
@@ -164,8 +183,10 @@ func needsCorrection(c : Character, point : Int) -> Bool {
 
 func deasciify(s : String) -> String {
   print("deasciify: \(s)")
+  asciiString = s;
+  turkishString = s;
   for (i, c) in s.characters.enumerated() {
-    if (needsCorrection(c: charAt(s: s, i: i), point: i)) {
+    if needsCorrection(c: charAt(s: s, i: i), point: i) {
       turkishString =
         setCharAt(s: turkishString, n: i, c: toggleAccent(letter: c))
     } else {
