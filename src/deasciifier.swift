@@ -144,7 +144,7 @@ func matchPattern(dlist : [String: Int], point : Int) -> Bool {
   return rank > 0;
 }
 
-func needsCorrectionAux(c : Character, point : Int) -> Bool {
+func needsCorrection(c : Character, point : Int) -> Bool {
   let ch = c;
   var tr : Character;
   if let v = asciify(letter: c, mode: .regular)
@@ -157,18 +157,15 @@ func needsCorrectionAux(c : Character, point : Int) -> Bool {
     m = matchPattern(dlist: pl, point: point)
   }
 
-  if (tr == "I") { return ch == tr ? !m : m }
-  return ch == tr ? m : !m;
-}
-
-func needsCorrection(letter : Character) -> Bool {
-  return needsCorrectionAux(c: letter, point: 0);
+  return tr == "I" ? (ch == tr ? !m : m) : (ch == tr ? m : !m)
+  // if (tr == "I") { return ch == tr ? !m : m }
+  // return ch == tr ? m : !m;
 }
 
 func deasciify(s : String) -> String {
-  for i in 1...s.characters.count-1 {
-    let c = charAt(s: s, i: i)
-    if (needsCorrectionAux(c: charAt(s: s, i: i), point: i)) {
+  print("deasciify: \(s)")
+  for (i, c) in s.characters.enumerated() {
+    if (needsCorrection(c: charAt(s: s, i: i), point: i)) {
       turkishString =
         setCharAt(s: turkishString, n: i, c: toggleAccent(letter: c))
     } else {
