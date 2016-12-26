@@ -186,4 +186,6 @@ func deasciify(s : String) -> String {
   return turkishString
 }
 
-print(deasciify(s: "opusmeyi"))
+if let input = readLine() {
+  print(deasciify(s: input))
+}
