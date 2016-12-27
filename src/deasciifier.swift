@@ -1,7 +1,9 @@
 import patterns
 
+let contextSize = 10;
+
 var turkishString = String();
-var asciiString = String();
+var asciiString   = String();
 
 let upperCaseLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters)
 
@@ -10,8 +12,7 @@ func lowercased(letter : Character) -> Character {
 }
 
 func uppercased(letter : Character) -> Character {
-  let s = String(letter);
-  return s.uppercased()[s.startIndex];
+  let s = String(letter); return s.uppercased()[s.startIndex];
 }
 
 var asciifyTable : [Character: Character] = [
@@ -126,19 +127,17 @@ func getContext(size : Int, point : Int) -> String {
   return s;
 }
 
-let contextSize = 10;
-
 func matchPattern(dlist : [String: Int], point : Int) -> Bool {
   var rank = dlist.count * 2;
   let str = getContext(size: contextSize, point: point);
 
   for start in 0...contextSize {
-    for end in contextSize + 1...str.characters.count {
+    for end in contextSize+1...str.characters.count {
       let s = substring(x: start, y: end, s: str);
       if let r = dlist[s] { if abs(r) < abs(rank) { rank = r; } }
     }
   }
-  
+
   return rank > 0;
 }
 
