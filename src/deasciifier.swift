@@ -73,8 +73,6 @@ func setCharAt(s : String, n : Int, c : Character) -> String {
   }
   return modifiedString
 }
-assert(setCharAt(s: "ayberk", n: 0, c: "b") == "byberk")
-assert(setCharAt(s: "ayberk", n: 1, c: "b") == "abberk")
 
 func charAt(s : String, i : Int) -> Character {
   let index = s.index(s.startIndex, offsetBy: i);
@@ -86,9 +84,6 @@ func substring(x : Int, y : Int, s : String) -> String {
   let end   = s.index(s.startIndex, offsetBy: y);
   return s[start..<end];
 }
-assert(substring(x: 0, y: 3, s: "ayberk") == "ayb")
-assert(substring(x: 0, y: 0, s: "ayberk") == "")
-assert(substring(x: 0, y: 1, s: "ayberk") == "a")
 
 func getContext(size : Int, point : Int) -> String {
   let sx = String(repeating: " ", count: 1 + 2 * size);
