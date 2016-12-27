@@ -59,8 +59,6 @@ let toggleAccentTable : [Character: Character] = [
   "ş": "s", "Ş": "S"
 ]
 
-enum AsciifyLetterMode { case regular, lowercase, uppercase }
-
 func toggleAccent(letter : Character) -> Character {
   if let val = toggleAccentTable[letter] { return val; }
   return letter;
@@ -87,10 +85,10 @@ func substring(x : Int, y : Int, s : String) -> String {
 
 func getContext(size : Int, point : Int) -> String {
   let sx = String(repeating: " ", count: 1 + 2 * size);
-  // s = setCharAt(s: s, n: size, c: "X");
-  var s = substring(x: 0, y: size, s: sx)
-    + "X"
-    + substring(x: size+1, y: sx.characters.count, s: sx)
+  var s = setCharAt(s: sx, n: size, c: "X");
+  // var s = substring(x: 0, y: size, s: sx)
+    // + "X"
+    // + substring(x: size+1, y: sx.characters.count, s: sx)
 
   var (i, space, index) = (size + 1, false, point);
   index += 1;
@@ -151,11 +149,7 @@ func matchPattern(dlist : [String: Int], point : Int) -> Bool {
 func needsCorrection(c : Character, point : Int) -> Bool {
   let ch = c;
   var tr : Character;
-  if let v = asciifyTable[ch] {
-    tr = v;
-  } else {
-    tr = ch;
-  }
+  if let v = asciifyTable[ch] { tr = v; } else { tr = ch; }
 
   var m = false;
   if let pl = lookupPattern(letter: lowercased(letter: tr)) {
