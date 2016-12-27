@@ -131,17 +131,14 @@ let contextSize = 10;
 func matchPattern(dlist : [String: Int], point : Int) -> Bool {
   var rank = dlist.count * 2;
   let str = getContext(size: contextSize, point: point);
-  var (start, end, _len) = (0, 0, str.characters.count);
 
-  while start <= contextSize {
-    end = contextSize + 1;
-    while end <= _len {
+  for start in 0...contextSize {
+    for end in contextSize + 1...str.characters.count {
       let s = substring(x: start, y: end, s: str);
       if let r = dlist[s] { if abs(r) < abs(rank) { rank = r; } }
-      end += 1;
     }
-    start += 1;
   }
+  
   return rank > 0;
 }
 
