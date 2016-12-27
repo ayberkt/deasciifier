@@ -73,8 +73,7 @@ func setCharAt(s : String, n : Int, c : Character) -> String {
 }
 
 func charAt(s : String, i : Int) -> Character {
-  let index = s.index(s.startIndex, offsetBy: i);
-  return s[index];
+  let index = s.index(s.startIndex, offsetBy: i); return s[index];
 }
 
 func substring(x : Int, y : Int, s : String) -> String {
@@ -147,18 +146,10 @@ func matchPattern(dlist : [String: Int], point : Int) -> Bool {
 }
 
 func needsCorrection(c : Character, point : Int) -> Bool {
-  let ch = c;
-  var tr : Character;
-  if let v = asciifyTable[ch] { tr = v; } else { tr = ch; }
-
-  var m = false;
-  if let pl = lookupPattern(letter: lowercased(letter: tr)) {
-    m = matchPattern(dlist: pl, point: point)
-  } else {
-    m = false;
-  }
-
-  return tr == "I" ? (ch == tr ? !m : m) : (ch == tr ? m : !m)
+  let v  = asciifyTable[c]; let tr = v == nil ? c : v!;
+  let pl = lookupPattern(letter: lowercased(letter: tr));
+  let m  = pl == nil ? false : matchPattern(dlist: pl!, point: point);
+  return tr == "I" ? (c == tr ? !m : m) : (c == tr ? m : !m)
 }
 
 func deasciify(s : String) -> String {
