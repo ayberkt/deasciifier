@@ -1,3 +1,5 @@
+*.dylib
+*.swiftmodule
 deasciifier
 =======
 # Xcode
