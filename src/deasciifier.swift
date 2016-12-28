@@ -66,11 +66,12 @@ func toggleAccent(letter : Character) -> Character {
 }
 
 func setCharAt(s : String, n : Int, c : Character) -> String {
-  var modifiedString = String()
-  for (i, char) in s.characters.enumerated() {
-      modifiedString += String((i == n) ? c : char)
-  }
-  return modifiedString
+    var string = s
+    
+    let idx = string.index(string.startIndex, offsetBy: n)
+    string.replaceSubrange(idx...idx, with: String(c))
+    
+    return string
 }
 
 func charAt(s : String, i : Int) -> Character {
